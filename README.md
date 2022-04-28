@@ -4,7 +4,7 @@
 
 #### 感谢
 
-> 本项目的图片UI设计来源于 GNAQ、雨笙Fracture (按首字母排序)。
+> 本项目的图片UI设计来源于 GNAQ、linwenxuan04、雨笙Fracture (按首字母排序)。
 
 #### 用户须知
 
@@ -31,8 +31,8 @@
 #### 调用参数定义
 
 ```
-    args[0]         args[1]     args[2]        args[3]                     args[4]
-    1|2|3|b30|ala   best|info   base64(json)   base64(ala-userinfo-json)   usercode
+    args[0]             args[1]     args[2]        args[3]                     args[4]
+    1|2|3|b30|b40|ala   best|info   base64(json)   base64(ala-userinfo-json)   usercode
 
     args[3] and args[4] only for ala-b30
     args[2] json from AUA except args[0] is "ala"
@@ -68,8 +68,5 @@
 
 **arcsong.json**
 
-* Arcaea曲目信息，与ArcaeaUnlimitedApi(*)的song/list接口一致，**需要手动更新**
-
-注*：ArcaeaUnlimitedApi: 由TheSnowfield与Awbugl基于BotArcAPI开发的项目。详情请咨询Awbugl。
-
+* Arcaea曲目信息，与ArcaeaUnlimitedApi的song/list接口一致，**需要手动更新**
 
