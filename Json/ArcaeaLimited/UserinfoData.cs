@@ -1,6 +1,8 @@
 ﻿using Newtonsoft.Json;
 
-namespace ImageGenerator.Data.Json.Arcaea.ArcaeaLimitedApi;
+#pragma warning disable CS8618
+
+namespace ImageGenerator.Json.ArcaeaLimited;
 
 [Serializable]
 public class UserinfoData

@@ -7,9 +7,9 @@ internal static class Color
                                                   Black = System.Drawing.Color.Black,
                                                   Light = FromArgb(150, 100, 200, 225),
                                                   Conflict = FromArgb(150, 50, 20, 75),
-                                                  PmColor = FromArgb(150, 180, 200), OsuGray = FromArgb(128, 128, 128),
-                                                  ArcGray = FromArgb(60, 60, 60), ArcPurple = FromArgb(31, 30, 51),
-                                                  GnaqGray = FromArgb(110, 110, 110), AzusaGray = FromArgb(90, 90, 90);
+                                                  PmColor = FromArgb(150, 180, 200), ArcGray = FromArgb(60, 60, 60),
+                                                  ArcPurple = FromArgb(31, 30, 51), GnaqGray = FromArgb(110, 110, 110),
+                                                  AzusaGray = FromArgb(90, 90, 90);
 
     internal static System.Drawing.Color FromArgb(int alpha, System.Drawing.Color baseColor) =>
         System.Drawing.Color.FromArgb(alpha, baseColor);

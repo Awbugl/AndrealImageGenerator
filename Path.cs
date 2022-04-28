@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using ImageGenerator.Model;
 
 namespace ImageGenerator;
 
@@ -19,6 +20,8 @@ internal class Path
 
     internal static readonly Path ArcaeaBest30Bg = new(_arcaeaSourceRoot + "B30.png");
 
+    internal static readonly Path ArcaeaBest40Bg = new(_arcaeaSourceRoot + "B40.png");
+
     internal static readonly Path ArcaeaUnknownBg = new(_arcaeaSourceRoot + "Unknown.png");
 
     internal static readonly Path ArcaeaBg1Mask = new(_arcaeaSourceRoot + "Mask.png");
@@ -36,6 +39,22 @@ internal class Path
 
     internal bool FileExists => File.Exists(this);
 
+    internal static Path ArcaeaBackground(int version, ArcaeaChart chart) =>
+        new(_arcaeaBackgroundRoot + $"V{version}_{ArcaeaTempSong(chart)}.png");
+
+    private static string ArcaeaTempSong(ArcaeaChart chart)
+    {
+        var song = chart switch
+                   {
+                       _ when chart.JacketOverride => $"{chart.SongID}_{chart.RatingClass}",
+                       _ when chart.SongID == "melodyoflove" =>
+                           $"melodyoflove{(DateTime.Now.Hour is > 19 or < 6 ? "_night" : "")}",
+                       _ => chart.SongID
+                   };
+        return song;
+    }
+
+
     internal static Path RandImageFileName() => new(_tempImageRoot + $"{RandStringHelper.GetRandString()}.jpg");
 
     internal static Path ArcaeaBg1(string sid, sbyte difficulty) =>
@@ -49,28 +68,8 @@ internal class Path
 
     internal static Path ArcaeaBg3Mask(int side) => new(_arcaeaSourceRoot + $"RawV3Bg_{side}.png");
 
-    internal static string ArcaeaSong(string sid, sbyte difficulty)
-    {
-        var diff = difficulty switch
-                   {
-                       0 => "0",
-                       1 => "1",
-                       2 => "base",
-                       3 => "3",
-                       _ => throw new ArgumentOutOfRangeException(nameof(difficulty))
-                   };
-
-        var pth = new DirectoryInfo($"{_songPath}/dl_{sid}").Exists
-            ? $"{_songPath}/dl_{sid}"
-            : $"{_songPath}/{sid}";
-
-        var result = $"{pth}/{diff}.jpg";
-
-        if (!File.Exists(result)) result = $"{pth}/base.jpg";
-
-        return result;
-    }
-
+    internal static string ArcaeaSong(ArcaeaChart chart) =>
+        $"{_songPath}/{(chart.RemoteDownload ? "dl_" : "")}/{(chart.JacketOverride ? chart.RatingClass.ToString() : "base")}.jpg";
 
     internal static Path ArcaeaRating(short potential)
     {
@@ -98,7 +97,7 @@ internal class Path
 
     internal static Path ArcaeaCleartypeV1(sbyte cleartype) => new(_arcaeaSourceRoot + $"end_{cleartype}.png");
 
-    internal static Path ArcaeaDifficultyForV1(sbyte difficulty) => new(_arcaeaSourceRoot + $"con_{difficulty}.png");
+    internal static Path ArcaeaDifficultyForV1(int difficulty) => new(_arcaeaSourceRoot + $"con_{difficulty}.png");
 
     public static implicit operator string(Path path) => path._rawpath;
 

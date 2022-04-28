@@ -1,14 +1,16 @@
 using Newtonsoft.Json;
 
-namespace ImageGenerator.Data.Json.Arcaea.ArcaeaUnlimitedApi;
+#pragma warning disable CS8618
+
+namespace ImageGenerator.Json.ArcaeaUnlimited;
 
 public class ArcSongdata
 {
-    [JsonProperty("song_id")] public string SongId { get; set; }
+    [JsonProperty("song_id")] public string SongID { get; set; }
 
     [JsonProperty("difficulty")] public sbyte Difficulty { get; set; }
 
-    [JsonProperty("score")] public string Score { get; set; }
+    [JsonProperty("score")] public int Score { get; set; }
 
     [JsonProperty("shiny_perfect_count")] public string MaxPure { get; set; }
 

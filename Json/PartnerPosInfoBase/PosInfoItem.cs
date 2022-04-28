@@ -1,5 +1,7 @@
-namespace ImageGenerator.Data.Json.Arcaea.PartnerPosInfoBase;
+namespace ImageGenerator.Json.PartnerPosInfoBase;
 
+#pragma warning disable CS8618
+// ReSharper disable MemberCanBeInternal
 public class PosInfoItem
 {
     public string Partner { get; set; }

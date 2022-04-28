@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
-using ImageGenerator.Data.Json.Arcaea.PartnerPosInfoBase;
-using ImageGenerator.Model;
+using ImageGenerator.Json.PartnerPosInfoBase;
 
 namespace ImageGenerator.UI.Model;
 

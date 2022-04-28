@@ -6,9 +6,9 @@ namespace ImageGenerator.UI.Model;
 
 internal class ImageModel : IGraphicsModel
 {
-    private readonly Image _image;
+    private readonly Image? _image;
     private readonly int? _newWidth, _newHeight;
-    private readonly Path _path;
+    private readonly Path? _path;
     private readonly int _posX, _posY;
 
     internal ImageModel(Image image, int posX, int posY, int? newWidth = null, int? newHeight = null)
@@ -33,15 +33,15 @@ internal class ImageModel : IGraphicsModel
 
     void IGraphicsModel.Draw(Graphics g)
     {
-        var image = _image ?? new Image(_path);
+        var image = _image ?? new Image(_path!);
 
         if (_newWidth == null && _newHeight == null)
             Image.ImageExtend.DrawImage(g, image, _posX, _posY);
         else
         {
-            var newWidth = _newWidth ?? _newHeight * image.Width / image.Height;
-            var newHeight = _newHeight ?? _newWidth * image.Height / image.Width;
-            Image.ImageExtend.DrawImage(g, image, _posX, _posY, (int)newWidth, (int)newHeight);
+            var newWidth = _newWidth ?? _newHeight * image.Width / image.Height ?? image.Width;
+            var newHeight = _newHeight ?? _newWidth * image.Height / image.Width ?? image.Height;
+            Image.ImageExtend.DrawImage(g, image, _posX, _posY, newWidth, newHeight);
         }
 
         image.Dispose();

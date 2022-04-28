@@ -1,40 +1,40 @@
-﻿using System.Drawing;
-using System.Text;
-using ImageGenerator.Data.Json.Arcaea.ArcaeaLimitedApi;
-using ImageGenerator.Data.Json.Arcaea.ArcaeaUnlimitedApi;
-using Image = ImageGenerator.UI.Image;
+﻿using System.Text;
+using ImageGenerator.Json.ArcaeaLimited;
+using ImageGenerator.Json.ArcaeaUnlimited;
+using ImageGenerator.UI;
 
 namespace ImageGenerator.Model;
 
 [Serializable]
 internal class RecordInfo
 {
-    private readonly string _score;
+    private readonly int _score;
 
     internal RecordInfo(RecordDataItem recentdata, sbyte difficulty = -128)
     {
         Difficulty = difficulty == -128
             ? recentdata.Difficulty
             : difficulty;
-        SongInfo = new(recentdata.SongId, Difficulty);
+        SongInfo = ArcaeaCharts.QueryByID(recentdata.SongID)![Difficulty];
         Cleartype = 0;
-        SongId = recentdata.SongId;
+        SongID = recentdata.SongID;
         Rating = recentdata.PotentialValue.ToString("0.0000");
         Pure = recentdata.PureCount;
         MaxPure = recentdata.ShinyPureCount;
         Far = recentdata.FarCount;
         Lost = recentdata.LostCount;
-        Time = new DateTime(1970, 1, 1, 8, 0, 0, DateTimeKind.Utc).AddMilliseconds(recentdata.TimePlayed);
+        Time = DateTime.UnixEpoch.AddMilliseconds(recentdata.TimePlayed);
 
         _score = recentdata.Score;
     }
 
+
     public RecordInfo(ArcSongdata recentdata)
     {
         Difficulty = recentdata.Difficulty;
-        SongInfo = new(recentdata.SongId, Difficulty);
+        SongInfo = ArcaeaCharts.QueryByID(recentdata.SongID)![Difficulty];
         Cleartype = recentdata.ClearType;
-        SongId = recentdata.SongId;
+        SongID = recentdata.SongID;
         Rating = recentdata.Rating.ToString("0.0000");
         Pure = recentdata.Pure;
         MaxPure = recentdata.MaxPure;
@@ -44,15 +44,15 @@ internal class RecordInfo
         _score = recentdata.Score;
     }
 
-    internal SongInfo SongInfo { get; }
+    internal ArcaeaChart SongInfo { get; }
 
     internal sbyte Cleartype { get; }
 
-    internal sbyte Difficulty { get; }
+    internal int Difficulty { get; }
 
     internal bool IsRecent => Difficulty == -128;
 
-    internal string SongId { get; }
+    internal string SongID { get; }
 
     internal string Rating { get; }
 
@@ -72,20 +72,19 @@ internal class RecordInfo
 
     internal double Const => SongInfo.Const;
 
-    internal Color MainColor => SongInfo.MainColor;
-
     internal string Score
     {
         get
         {
+            var scorestr = _score.ToString();
             var result = new StringBuilder();
-            var len = _score.Length;
+            var len = scorestr.Length;
             for (var i = 0; i < 8; i++)
             {
                 var j = len - 8 + i;
                 result.Append(j < 0
                                   ? '0'
-                                  : _score[j]);
+                                  : scorestr[j]);
                 if (i is 1 or 4) result.Append('\'');
             }
 
@@ -97,7 +96,7 @@ internal class RecordInfo
     {
         get
         {
-            return Convert.ToInt32(_score) switch
+            return _score switch
                    {
                        >= 9900000 => "[EX+]",
                        >= 9800000 => "[EX]",
@@ -110,13 +109,13 @@ internal class RecordInfo
         }
     }
 
-    internal Image GetSongImg() => SongInfo.GetSongImg();
+    internal Task<Image> GetSongImage() => SongInfo.GetSongImage();
 
     internal string SongName(byte length) => SongInfo.GetSongName(length);
 
     internal bool Compare(RecordInfo? info)
     {
         if (info == null) return true;
-        return Convert.ToInt32(_score) > Convert.ToInt32(info._score);
+        return _score > info._score;
     }
 }

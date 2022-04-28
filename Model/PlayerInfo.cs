@@ -1,5 +1,5 @@
-﻿using ImageGenerator.Data.Json.Arcaea.ArcaeaLimitedApi;
-using ImageGenerator.Data.Json.Arcaea.ArcaeaUnlimitedApi;
+﻿using ImageGenerator.Json.ArcaeaLimited;
+using ImageGenerator.Json.ArcaeaUnlimited;
 
 namespace ImageGenerator.Model;
 
@@ -8,16 +8,16 @@ internal class PlayerInfo
 {
     internal PlayerInfo(UserinfoDataItem recentdata, int usercode)
     {
-        PlayerId = usercode.ToString("D9");
+        PlayerCode = usercode.ToString("D9");
         PlayerName = recentdata.DisplayName;
-        Partner = recentdata.Partner.PartnerId;
+        Partner = recentdata.Partner.PartnerID;
         IsAwakened = recentdata.Partner.IsAwakened;
         Potential = recentdata.Potential ?? -1;
     }
 
     public PlayerInfo(AccountInfo accountInfo)
     {
-        PlayerId = accountInfo.Code.ToString("D9");
+        PlayerCode = accountInfo.Code.ToString("D9");
         PlayerName = accountInfo.Name;
         Partner = accountInfo.Character;
         IsAwakened = accountInfo.IsCharUncapped && !accountInfo.IsCharUncappedOverride;
@@ -25,12 +25,8 @@ internal class PlayerInfo
     }
 
     internal string PlayerName { get; init; }
-
-    internal string PlayerId { get; init; }
-
+    internal string PlayerCode { get; init; }
     internal int Partner { get; }
-
     internal bool IsAwakened { get; }
-
     internal short Potential { get; }
 }

@@ -19,36 +19,16 @@ internal class ArcRecordImageGenerator
     private PlayerInfo PlayerInfo { get; }
     private RecordInfo RecordInfo { get; }
 
-    internal BackGround UnknownSong(double theconst)
+    internal async Task<BackGround> Version1()
     {
-        var bg = new BackGround(Path.ArcaeaUnknownBg);
-        bg.Draw(new ImageModel(Path.ArcaeaCleartypeV3(RecordInfo.Cleartype), 185, 1035, 630),
-                new ImageModel(Path.ArcaeaPartnerIcon(PlayerInfo.Partner, PlayerInfo.IsAwakened), 150, 160, 160),
-                new TextOnlyModel(PlayerInfo.PlayerName, Font.Andrea36, Color.Black, 340, 200),
-                new TextOnlyModel($"ArcID: {PlayerInfo.PlayerId}", Font.GeosansLight20, Color.GnaqGray, 340, 270),
-                new TextOnlyModel($"{RecordInfo.DifficultyInfo.LongStr} | {theconst:0.00}", Font.Beatrice24,
-                                  RecordInfo.DifficultyInfo.Color, 500, 925, StringAlignment.Center),
-                new PotentitalModel(PlayerInfo.Potential, 215, 215, 140),
-                new TextOnlyModel($"{RecordInfo.Score}  {RecordInfo.Rate}", Font.Exo44, Color.Black, 500, 1130,
-                                  StringAlignment.Center),
-                new TextOnlyModel(RecordInfo.Rating, Font.Exo20, Color.GnaqGray, 260, 1280),
-                new TextOnlyModel(RecordInfo.TimeStr, Font.Exo20, Color.GnaqGray, 260, 1360),
-                new TextOnlyModel(RecordInfo.Pure + $" (+{RecordInfo.MaxPure})", Font.Exo20, Color.Black, 730, 1265),
-                new TextOnlyModel(RecordInfo.Far, Font.Exo20, Color.Black, 730, 1320),
-                new TextOnlyModel(RecordInfo.Lost, Font.Exo20, Color.Black, 730, 1375));
-        return bg;
-    }
+        var bg = await new ArcBackgroundGenerator(RecordInfo).ArcV1();
 
-    internal BackGround Version1()
-    {
-        var bg = new ArcBackgroundGenerator(RecordInfo.SongInfo).ArcV1();
-
-        using var song = RecordInfo.GetSongImg();
+        using var song = await RecordInfo.GetSongImage();
 
         bg.Draw(new PartnerModel(PlayerInfo.Partner, PlayerInfo.IsAwakened, ImgVersion.ImgV1),
                 new PotentitalModel(PlayerInfo.Potential, 87, 60), new ImageModel(Path.ArcaeaGlass, 810, 240, 630),
                 new TextWithStrokeModel(PlayerInfo.PlayerName, Font.KazesawaLight40, Color.White, 275, 100),
-                new TextWithStrokeModel("ID " + PlayerInfo.PlayerId, Font.KazesawaLight32, Color.White, 275, 160),
+                new TextWithStrokeModel("Code " + PlayerInfo.PlayerCode, Font.KazesawaLight32, Color.White, 275, 160),
                 new ImageModel(Path.ArcaeaCleartypeV1(RecordInfo.Cleartype), -56, 224, 700),
                 new ImageModel(song, 150, 430, 290),
                 new ImageModel(Path.ArcaeaDifficultyForV1(RecordInfo.Difficulty), 333, 680, 150),
@@ -67,9 +47,9 @@ internal class ArcRecordImageGenerator
         return bg;
     }
 
-    internal BackGround Version2()
+    internal async Task<BackGround> Version2()
     {
-        var bg = new ArcBackgroundGenerator(RecordInfo.SongInfo).ArcV2();
+        var bg = await new ArcBackgroundGenerator(RecordInfo).ArcV2();
         bg.Draw(new TextWithShadowModel($"{RecordInfo.DifficultyInfo.LongStr}  {RecordInfo.Const:0.0}", Font.Andrea36, 514, 850),
                 new PartnerModel(PlayerInfo.Partner, PlayerInfo.IsAwakened, ImgVersion.ImgV2),
                 new PotentitalModel(PlayerInfo.Potential, 79, 38), new TextWithShadowModel(RecordInfo.IsRecent
@@ -85,18 +65,18 @@ internal class ArcRecordImageGenerator
                 new TextWithShadowModel(RecordInfo.Lost, Font.Exo32, 560, 525),
                 new TextWithShadowModel(RecordInfo.TimeStr, Font.Exo32, 350, 595),
                 new TextWithShadowModel(PlayerInfo.PlayerName, Font.Andrea56, 290, 60),
-                new TextWithShadowModel($"ArcID: {PlayerInfo.PlayerId}", Font.Andrea28, 297, 150));
+                new TextWithShadowModel($"ArcCode: {PlayerInfo.PlayerCode}", Font.Andrea28, 297, 150));
         return bg;
     }
 
-    internal BackGround Version3()
+    internal async Task<BackGround> Version3()
     {
-        var bg = new ArcBackgroundGenerator(RecordInfo.SongInfo).ArcV3();
+        var bg = await new ArcBackgroundGenerator(RecordInfo).ArcV3();
         bg.Draw(new ImageModel(Path.ArcaeaCleartypeV3(RecordInfo.Cleartype), 185, 1035, 630),
                 new ImageModel(Path.ArcaeaPartnerIcon(PlayerInfo.Partner, PlayerInfo.IsAwakened), 150, 160, 160),
                 new PotentitalModel(PlayerInfo.Potential, 215, 215, 140),
                 new TextOnlyModel(PlayerInfo.PlayerName, Font.Andrea36, Color.Black, 340, 200),
-                new TextOnlyModel($"ArcID: {PlayerInfo.PlayerId}", Font.GeosansLight20, Color.GnaqGray, 340, 270),
+                new TextOnlyModel($"ArcCode: {PlayerInfo.PlayerCode}", Font.GeosansLight20, Color.GnaqGray, 340, 270),
                 new TextOnlyModel($"{RecordInfo.DifficultyInfo.LongStr} | {RecordInfo.Const:0.0}", Font.Beatrice24,
                                   RecordInfo.DifficultyInfo.Color, 500, 925, StringAlignment.Center),
                 new TextOnlyModel($"{RecordInfo.Score}  {RecordInfo.Rate}", Font.Exo44, Color.Black, 500, 1130,

@@ -2,14 +2,13 @@
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Drawing.Text;
-using System.Runtime.InteropServices;
 using ImageGenerator.UI.Model;
 
 namespace ImageGenerator.UI;
 
 #pragma warning disable CA1416
 
-internal class BackGround : Image, IDisposable
+public class BackGround : Image, IDisposable
 {
     private Graphics? _g;
 
@@ -59,16 +58,9 @@ internal class BackGround : Image, IDisposable
         foreach (var i in graphicsModelCollection) i.Draw(GraphicsFromBackGround());
     }
 
-    [DllImport(@"Andreal\Other\StackBlurHost.dll", CallingConvention = CallingConvention.StdCall)]
-    private static extern void StackBlurHost(IntPtr imagePixelBuffer, int imageWidth, int imageHeight, int imageStride,
-                                             int roundSize);
-
-    internal BackGround BlurImage(int roundSize)
+    internal BackGround Blur(byte round)
     {
-        var bm = Bitmap.LockBits(new(0, 0, Bitmap.Width, Bitmap.Height), ImageLockMode.ReadWrite,
-                                 PixelFormat.Format32bppArgb);
-        StackBlurHost(bm.Scan0, bm.Width, bm.Height, bm.Stride, roundSize);
-        Bitmap.UnlockBits(bm);
+        StackBlur.StackBlurRGBA32(Bitmap, round);
         return this;
     }
 }

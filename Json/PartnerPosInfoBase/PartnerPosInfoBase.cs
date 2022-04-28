@@ -1,8 +1,7 @@
 ﻿using System.Collections.Concurrent;
-using ImageGenerator.Model;
 using Newtonsoft.Json;
 
-namespace ImageGenerator.Data.Json.Arcaea.PartnerPosInfoBase;
+namespace ImageGenerator.Json.PartnerPosInfoBase;
 
 internal static class PartnerPosInfoBase
 {

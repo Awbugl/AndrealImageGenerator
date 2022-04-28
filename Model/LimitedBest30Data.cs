@@ -1,4 +1,4 @@
-﻿using ImageGenerator.Data.Json.Arcaea.ArcaeaLimitedApi;
+﻿using ImageGenerator.Json.ArcaeaLimited;
 
 namespace ImageGenerator.Model;
 
@@ -6,6 +6,7 @@ namespace ImageGenerator.Model;
 internal class LimitedBest30Data : IBest30Data
 {
     private double _b30Avg, _r10Avg;
+
     private List<RecordInfo> _best30List;
 
     private short _potential;
@@ -30,55 +31,9 @@ internal class LimitedBest30Data : IBest30Data
             ? _r10Avg.ToString("0.0000")
             : "--";
 
-    private string Best30TextResult
-    {
-        get
-        {
-            var result = $"您的B30为 {Best30Avg}\n您的R10为 {Recent10Avg}\nB30列表：";
-
-            for (var i = 0; i < _best30List.Count; ++i)
-                result
-                    += $"\n\n{_best30List[i].SongName(60)} [{_best30List[i].DifficultyInfo.ShortStr}]  #{i + 1}\n Score:{_best30List[i].Score}  PTT:{_best30List[i].Rating}\nPure:{_best30List[i].Pure} (+{_best30List[i].MaxPure})  Far:{_best30List[i].Far}  Lost:{_best30List[i].Lost}";
-
-            return result;
-        }
-    }
-
-    private string Best5TextResult
-    {
-        get
-        {
-            var result = $"您的B30为 {Best30Avg}\n您的R10为 {Recent10Avg}\nB5列表：";
-
-            for (var i = 0; i < Math.Min(5, _best30List.Count); ++i)
-                result
-                    += $"\n\n{_best30List[i].SongName(60)} [{_best30List[i].DifficultyInfo.ShortStr}]  #{i + 1}\n Score:{_best30List[i].Score}  PTT:{_best30List[i].Rating}\nPure:{_best30List[i].Pure} (+{_best30List[i].MaxPure})  Far:{_best30List[i].Far}  Lost:{_best30List[i].Lost}";
-
-            return result;
-        }
-    }
-
-    private string Floor5TextResult
-    {
-        get
-        {
-            var result = $"您的B30为 {Best30Avg}\n您的R10为 {Recent10Avg}\nF5列表：";
-
-            for (var i = 0; i < Math.Min(5, _best30List.Count); ++i)
-            {
-                var record = _best30List[i + Math.Max(0, _best30List.Count - 5)];
-                result
-                    += $"\n\n{record.SongName(60)} [{record.DifficultyInfo.ShortStr}]  #{i + Math.Max(0, _best30List.Count - 5) + 1}\n Score:{record.Score}  PTT:{record.Rating}\nPure:{record.Pure} (+{record.MaxPure})  Far:{record.Far}  Lost:{record.Lost}";
-            }
-
-            return result;
-        }
-    }
-
     string IBest30Data.Best30Avg => Best30Avg;
+
     string IBest30Data.Recent10Avg => Recent10Avg;
+
     List<RecordInfo> IBest30Data.Best30List => _best30List;
-    string IBest30Data.Best30TextResult => Best30TextResult;
-    string IBest30Data.Best5TextResult => Best5TextResult;
-    string IBest30Data.Floor5TextResult => Floor5TextResult;
 }

@@ -7,24 +7,29 @@ namespace ImageGenerator.UI;
 
 #pragma warning disable CA1416
 
-internal class Image : IDisposable
+public class Image : IDisposable
 {
     protected readonly Bitmap Bitmap;
 
     private protected bool Alreadydisposed;
 
-    internal Image(string path) { Bitmap = new(path); }
+    internal Image(Path path) { Bitmap = new(path); }
+
+    internal Image(int width, int height) { Bitmap = new(width, height); }
 
     internal Image(Bitmap bitmap)
     {
         lock (bitmap) Bitmap = bitmap;
     }
 
-    internal Image(int width, int height) { Bitmap = new(width, height); }
-
     internal Image(Image origin, int width, int height)
     {
         lock (origin) Bitmap = new(origin.Bitmap, width, height);
+    }
+
+    internal Image(Stream stream)
+    {
+        lock (stream) Bitmap = (Bitmap)System.Drawing.Image.FromStream(stream);
     }
 
     internal int Width => Bitmap.Width;
@@ -36,12 +41,12 @@ internal class Image : IDisposable
     public void Dispose()
     {
         if (Alreadydisposed) return;
-        Bitmap?.Dispose();
+        Bitmap.Dispose();
         GC.SuppressFinalize(this);
         Alreadydisposed = true;
     }
 
-    ~Image() { Bitmap?.Dispose(); }
+    ~Image() { Bitmap.Dispose(); }
 
     private System.Drawing.Color DeserializeColor()
     {
@@ -71,8 +76,6 @@ internal class Image : IDisposable
 
     internal void SaveAsPng(Path path) { Bitmap.Save(path, ImageFormat.Png); }
 
-    internal void SaveAsJpg(Path path) { Bitmap.Save(path, ImageFormat.Jpeg); }
-
     internal void SaveAsJpgWithQuality(Path path, int quality = 50) { ImageExtend.SaveAsJpeg(Bitmap, path, quality); }
 
     internal static class ImageExtend
@@ -100,7 +103,7 @@ internal class Image : IDisposable
         }
 
 
-        private static ImageCodecInfo GetCodecInfo(string mimeType)
+        private static ImageCodecInfo? GetCodecInfo(string mimeType)
         {
             return ImageCodecInfo.GetImageEncoders().FirstOrDefault(ici => ici.MimeType == mimeType);
         }
@@ -109,7 +112,7 @@ internal class Image : IDisposable
         {
             var ps = new EncoderParameters(1);
             ps.Param[0] = new(Encoder.Quality, quality);
-            bmp.Save(path, GetCodecInfo("image/jpeg"), ps);
+            bmp.Save(path, GetCodecInfo("image/jpeg")!, ps);
         }
     }
 }
