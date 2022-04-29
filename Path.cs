@@ -69,7 +69,7 @@ internal class Path
     internal static Path ArcaeaBg3Mask(int side) => new(_arcaeaSourceRoot + $"RawV3Bg_{side}.png");
 
     internal static string ArcaeaSong(ArcaeaChart chart) =>
-        $"{_songPath}/{(chart.RemoteDownload ? "dl_" : "")}/{(chart.JacketOverride ? chart.RatingClass.ToString() : "base")}.jpg";
+        $"{_songPath}/{(chart.RemoteDownload ? "dl_" : "")}{chart.SongID}/{(chart.JacketOverride ? chart.RatingClass.ToString() : "base")}.jpg";
 
     internal static Path ArcaeaRating(short potential)
     {

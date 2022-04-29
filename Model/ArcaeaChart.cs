@@ -39,8 +39,6 @@ public class ArcaeaChart
 
     internal DifficultyInfo DifficultyInfo => DifficultyInfo.GetByIndex(RatingClass);
 
-    internal string ConstString => $"[{DifficultyInfo.ShortStr} {Const:0.0}]";
-
     internal string GetSongName(byte length) =>
         NameEn.Length < length + 3
             ? NameEn
@@ -50,28 +48,20 @@ public class ArcaeaChart
     {
         var path = Path.ArcaeaSong(this);
 
-        try
+        if (!SongImage.TryGetValue(path, out var stream))
         {
-            if (!SongImage.TryGetValue(path, out var stream))
-            {
-                await using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
-                var bytes = new byte[fileStream.Length];
-                fileStream.Read(bytes, 0, bytes.Length);
-                fileStream.Close();
-                stream = new MemoryStream(bytes);
-                SongImage.Add(path, stream);
-            }
+            await using var fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+            var bytes = new byte[fileStream.Length];
+            fileStream.Read(bytes, 0, bytes.Length);
+            fileStream.Close();
+            stream = new MemoryStream(bytes);
+            SongImage.Add(path, stream);
+        }
 
-            var img = new Image(stream);
-            if (img.Width == 512) return img;
-            var newimg = new Image(img, 512, 512);
-            img.Dispose();
-            return newimg;
-        }
-        catch
-        {
-            File.Delete(path);
-            throw new ArgumentException($"InvalidSongImage: {NameEn}, deleted.");
-        }
+        var img = new Image(stream);
+        if (img.Width == 512) return img;
+        var newimg = new Image(img, 512, 512);
+        img.Dispose();
+        return newimg;
     }
 }
