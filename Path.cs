@@ -75,6 +75,7 @@ internal class Path
     {
         var img = potential switch
                   {
+                      >= 1300 => "7",
                       >= 1250 => "6",
                       >= 1200 => "5",
                       >= 1100 => "4",
