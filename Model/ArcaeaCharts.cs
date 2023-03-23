@@ -12,8 +12,7 @@ internal static class ArcaeaCharts
     {
         Songs.Clear();
 
-        var slst = JsonConvert.DeserializeObject<ResponseRoot>(File.ReadAllText(Path.ArcaeaSongs))!
-                              .DeserializeContent<SongListContent>().Songs;
+        List<SongsItem> slst = JsonConvert.DeserializeObject<SongListContent>(File.ReadAllText(Path.ArcaeaSongs))!.Songs;
 
         foreach (var songitem in slst)
         {
@@ -29,8 +28,5 @@ internal static class ArcaeaCharts
         }
     }
 
-    internal static ArcaeaSong? QueryByID(string? songid) =>
-        songid is not null && Songs.TryGetValue(songid, out var value)
-            ? value
-            : null;
+    internal static ArcaeaSong? QueryByID(string? songid) => songid is not null && Songs.TryGetValue(songid, out var value) ? value : null;
 }
