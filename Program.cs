@@ -1,87 +1,47 @@
-﻿using System.Text;
-using ImageGenerator.Json.ArcaeaLimited;
-using ImageGenerator.Json.ArcaeaUnlimited;
-using ImageGenerator.Model;
-using ImageGenerator.UI;
-using ImageGenerator.UI.ImageGenerator;
+﻿using System.Net;
+using AndrealImageGenerator.Common;
+using Microsoft.AspNetCore.Diagnostics;
 using Newtonsoft.Json;
 
-namespace ImageGenerator;
+var builder = WebApplication.CreateBuilder(args);
 
-internal static class Program
-{
-    private static T Deserialize<T>(string str) where T : class, new() =>
-        JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(Convert.FromBase64String(str))) ?? new T();
+ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+ServicePointManager.ServerCertificateValidationCallback = (
+    _,
+    _,
+    _,
+    _) => true;
 
-    // args[0]             args[1]     args[2]   args[3]                 args[4]
-    // 1,2,3,b30,b40,ala   best,info   jsonb64   jsonb64(ala-userinfo)   usercode
+ServicePointManager.DefaultConnectionLimit = 512;
+ServicePointManager.Expect100Continue = false;
+ServicePointManager.UseNagleAlgorithm = false;
+ServicePointManager.ReusePort = true;
+ServicePointManager.CheckCertificateRevocationList = true;
+WebRequest.DefaultWebProxy = null;
 
-    //args[3/4] only for alab30
-    public static async Task<int> Main(string[] args)
-    {
-        var config = JsonConvert.DeserializeObject<Config>(await File.ReadAllTextAsync(Path.Config))!;
-        Path.Init(config);
+// Add services to the container.
+builder.Services.AddControllers();
 
-        using var result = args[0] switch
-                           {
-                               "1" or "2" or "3" => await GetRecords(),
-                               "b30"             => await GetBest30(),
-                               "b40"             => await GetBest40(),
-                               "ala"             => await GetAlaBest30(),
-                               _                 => throw new ArgumentOutOfRangeException()
-                           };
-
-        var pth = Path.RandImageFileName();
-        result.SaveAsJpgWithQuality(pth);
-
-        Console.WriteLine(new FileInfo(pth).FullName);
-
-        Task<BackGround> GetRecords()
+builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore)
+       .ConfigureApiBehaviorOptions(options =>
         {
-            ArcRecordImageGenerator generator;
-            if (args[1] == "info")
-            {
-                var content = Deserialize<ResponseRoot>(args[2]).DeserializeContent<UserInfoContent>();
-                generator = new(new(content.AccountInfo), new(content.RecentScore[0]));
-            }
-            else
-            {
-                var content = Deserialize<ResponseRoot>(args[2]).DeserializeContent<UserBestContent>();
-                generator = new(new(content.AccountInfo), new(content.Record));
-            }
+            options.SuppressModelStateInvalidFilter = true;
+            options.SuppressMapClientErrors = true;
+        });
 
-            return args[0] switch
-                   {
-                       "1" => generator.Version1(),
-                       "2" => generator.Version2(),
-                       "3" => generator.Version3(),
-                       _   => throw new ArgumentOutOfRangeException()
-                   };
-        }
+var app = builder.Build();
 
-        Task<BackGround> GetBest30()
-        {
-            var content = Deserialize<ResponseRoot>(args[2]).DeserializeContent<UserBestsContent>();
-            var b30data = new Best30Data(content);
-            var playerInfo = new PlayerInfo(content.AccountInfo);
-            return new ArcBest30ImageGenerator(b30data, playerInfo).Generate();
-        }
+app.UseExceptionHandler(new ExceptionHandlerOptions
+                        {
+                            ExceptionHandler = context =>
+                            {
+                                context.Response.Clear();
+                                context.Response.StatusCode = 500;
+                                var ex = context.Features.Get<IExceptionHandlerFeature>()?.Error;
+                                if (ex != null) ExceptionLogger.Write(ex);
+                                return Task.CompletedTask;
+                            }
+                        });
 
-        Task<BackGround> GetBest40()
-        {
-            var content = Deserialize<ResponseRoot>(args[2]).DeserializeContent<UserBestsContent>();
-            var b30data = new Best40Data(content);
-            var playerInfo = new PlayerInfo(content.AccountInfo);
-            return new ArcBest40ImageGenerator(b30data, playerInfo).Generate();
-        }
-
-        Task<BackGround> GetAlaBest30()
-        {
-            var playerInfo = new PlayerInfo(Deserialize<UserinfoData>(args[3]).Data, int.Parse(args[4]));
-            var b30data = new LimitedBest30Data(Deserialize<Best30>(args[2]), playerInfo.Potential);
-            return new ArcBest30ImageGenerator(b30data, playerInfo).Generate();
-        }
-
-        return 0;
-    }
-}
+app.MapControllers();
+app.Run();
