@@ -21,6 +21,7 @@ public sealed class ImageAPI : ControllerBase
         var ms = new MemoryStream();
         backGround.SaveAsJpgWithQuality(ms);
         ms.Position = 0;
+        backGround.Dispose();
         return new(ms, "image/jpeg");
     }
 
