@@ -26,21 +26,27 @@ public sealed class ImageAPI : ControllerBase
     }
 
     [HttpPost("user/best30")]
-    public async Task<FileStreamResult> GetUserBest30([FromBody] ResponseRoot<UserBestsContent> json, ImgVersion imgVersion)
+    public async Task<FileStreamResult> GetUserBest30(
+        [FromBody] ResponseRoot<UserBestsContent> json,
+        [FromQuery(Name = "image_version")] ImgVersion imgVersion)
     {
         var backGround = await GetBestsGeneratorImage(json.Content, imgVersion);
         return FileStreamResult(backGround);
     }
 
     [HttpPost("user/best")]
-    public async Task<FileStreamResult> GetUserBest([FromBody] ResponseRoot<UserBestContent> json, ImgVersion imgVersion)
+    public async Task<FileStreamResult> GetUserBest(
+        [FromBody] ResponseRoot<UserBestContent> json,
+        [FromQuery(Name = "image_version")] ImgVersion imgVersion)
     {
         var backGround = await RecordGenerator.Generate(json.Content, imgVersion);
         return FileStreamResult(backGround);
     }
 
     [HttpPost("user/info")]
-    public async Task<FileStreamResult> GetUserInfo([FromBody] ResponseRoot<UserInfoContent> json, ImgVersion imgVersion)
+    public async Task<FileStreamResult> GetUserInfo(
+        [FromBody] ResponseRoot<UserInfoContent> json,
+        [FromQuery(Name = "image_version")] ImgVersion imgVersion)
     {
         var backGround = await RecordGenerator.Generate(json.Content, imgVersion);
         return FileStreamResult(backGround);

@@ -16,16 +16,16 @@ public class ArcSongdata
     public int Score { get; set; }
 
     [JsonProperty("shiny_perfect_count")]
-    public string MaxPure { get; set; }
+    public string MaxPure { get; set; } = "?";
 
     [JsonProperty("perfect_count")]
-    public string Pure { get; set; }
+    public string Pure { get; set; } = "?";
 
     [JsonProperty("near_count")]
-    public string Far { get; set; }
+    public string Far { get; set; } = "?";
 
     [JsonProperty("miss_count")]
-    public string Lost { get; set; }
+    public string Lost { get; set; } = "?";
 
     [JsonProperty("time_played")]
     public long TimePlayed { get; set; }
